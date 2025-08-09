@@ -117,37 +117,38 @@ async function findDataDirectory(): Promise<string> {
     }
   }
 
-  throw new Error(
-    "Could not find src/data directory in any expected location"
-  );
+  throw new Error("Could not find src/data directory in any expected location");
 }
 
 /**
  * データディレクトリからテキストファイルを読み込む
  */
-async function loadAllDataFiles(): Promise<Array<{ content: string; filename: string; path: string }>> {
+async function loadAllDataFiles(): Promise<
+  Array<{ content: string; filename: string; path: string }>
+> {
   const dataDir = await findDataDirectory();
   console.log(`📁 Scanning data directory: ${dataDir}`);
 
   const files = await fs.readdir(dataDir);
-  const textFiles = files.filter(file => 
-    file.endsWith('.txt') || 
-    file.endsWith('.md') || 
-    file.endsWith('.json') ||
-    file.endsWith('.csv')
+  const textFiles = files.filter(
+    (file) =>
+      file.endsWith(".txt") ||
+      file.endsWith(".md") ||
+      file.endsWith(".json") ||
+      file.endsWith(".csv")
   );
 
   if (textFiles.length === 0) {
     throw new Error(`No text files found in ${dataDir}`);
   }
 
-  console.log(`📄 Found ${textFiles.length} files: ${textFiles.join(', ')}`);
+  console.log(`📄 Found ${textFiles.length} files: ${textFiles.join(", ")}`);
 
   const fileData = [];
   for (const filename of textFiles) {
     const filePath = path.join(dataDir, filename);
     try {
-      const content = await fs.readFile(filePath, 'utf-8');
+      const content = await fs.readFile(filePath, "utf-8");
       fileData.push({ content, filename, path: filePath });
       console.log(`  ✅ Loaded: ${filename} (${content.length} characters)`);
     } catch (error) {
@@ -167,23 +168,28 @@ async function updateVectorStore() {
 
     // データディレクトリから全ファイルを読み込み
     const fileData = await loadAllDataFiles();
-    
+
     // 全ファイルのチャンクを収集
-    const allChunks: Array<{ text: string; source: string; fileIndex: number; chunkIndex: number }> = [];
-    
+    const allChunks: Array<{
+      text: string;
+      source: string;
+      fileIndex: number;
+      chunkIndex: number;
+    }> = [];
+
     for (let fileIndex = 0; fileIndex < fileData.length; fileIndex++) {
       const { content, filename } = fileData[fileIndex];
       const chunks = splitTextIntoChunks(content);
-      
+
       for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
         allChunks.push({
           text: chunks[chunkIndex],
           source: filename,
           fileIndex,
-          chunkIndex
+          chunkIndex,
         });
       }
-      
+
       console.log(`  📊 ${filename}: ${chunks.length} chunks`);
     }
 
@@ -204,7 +210,7 @@ async function updateVectorStore() {
     }
 
     // エンベディング生成
-    const texts = allChunks.map(chunk => chunk.text);
+    const texts = allChunks.map((chunk) => chunk.text);
     const embeddings = await generateEmbeddings(texts);
 
     // ドキュメントを挿入/更新
@@ -229,15 +235,16 @@ async function updateVectorStore() {
     console.log(
       `✅ Successfully updated PostgreSQL pgvector store with ${allChunks.length} documents from ${fileData.length} files`
     );
-    
+
     // ファイル別の統計を表示
     const fileStats = fileData.map((file, index) => {
-      const fileChunks = allChunks.filter(chunk => chunk.fileIndex === index);
+      const fileChunks = allChunks.filter((chunk) => chunk.fileIndex === index);
       return `  📄 ${file.filename}: ${fileChunks.length} chunks`;
     });
     console.log("📈 File breakdown:");
-    fileStats.forEach(stat => console.log(stat));
-    
+    for (const stat of fileStats) {
+      console.log(stat);
+    }
   } catch (error) {
     console.error("❌ Error updating vector store:", error);
     process.exit(1);
@@ -254,7 +261,7 @@ async function showStats() {
 
     const connectionInfo = {
       connectionString:
-        process.env.POSTGRES_URL ||
+        process.env.PG_CONNECTION_STRING ||
         "postgresql://postgres:password@localhost:5432/mastra_vectors",
       indexName: INDEX_NAME,
     };
@@ -322,7 +329,9 @@ switch (command) {
     console.log("PostgreSQL pgvector Store Manager");
     console.log("==================================");
     console.log("Available commands:");
-    console.log("  update  - Update vector store with all files from src/data/");
+    console.log(
+      "  update  - Update vector store with all files from src/data/"
+    );
     console.log("  stats   - Show vector store statistics");
     console.log("  rebuild - Completely rebuild vector store");
     console.log("");
