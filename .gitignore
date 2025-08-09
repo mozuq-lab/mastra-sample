@@ -1,0 +1,124 @@
+# Output files
+output.txt
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+*.js.map
+*.d.ts.map
+
+# Mastra specific
+.mastra/
+
+# Environment variables
+.env
+.env.development
+.env.test.local
+.env.production.local
+.env.local
+
+# Database files
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+mastra-vectors.db
+
+# MongoDB data directory
+mongodb-data/
+
+# PostgreSQL data directory
+postgres-data/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# IDE
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# API Keys and secrets
+**/secrets/
+**/*secret*
+**/*key*
+!**/public-key*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test artifacts
+test-results/
+coverage/
+
+# Local configuration
+config.local.js
+config.local.json
+.local.*
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Editor specific
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
