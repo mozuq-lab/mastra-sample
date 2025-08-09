@@ -3,7 +3,6 @@ import { createVectorQueryTool } from "@mastra/rag";
 import { getPostgresVector } from "../config/vectors.js";
 import { getLLMModel, getEmbeddingModel } from "../config/models.js";
 
-let knowledgeBaseLoaded = false;
 const INDEX_NAME = "knowledge_base";
 
 const RAG_AGENT_INSTRUCTIONS = `
@@ -35,32 +34,6 @@ const vectorQueryTool = createVectorQueryTool({
   description: "ナレッジベースからクエリに関連する情報を検索します",
 });
 
-// ベクタークエリツール実行前に初期化を確実に実行するためのラッパー
-const originalExecute = vectorQueryTool.execute;
-vectorQueryTool.execute = async function (
-  context: Parameters<typeof originalExecute>[0]
-) {
-  await ensureKnowledgeBaseLoaded();
-  return originalExecute.call(this, context);
-};
-
-// ナレッジベース読み込み関数
-async function ensureKnowledgeBaseLoaded() {
-  if (knowledgeBaseLoaded) {
-    return;
-  }
-
-  try {
-    console.log("🔍 PostgreSQL pgvectorベクターストアを確認中...");
-
-    knowledgeBaseLoaded = true;
-    console.log("✅ ベクターストアの準備が完了しました");
-  } catch (error) {
-    console.error("❌ ナレッジベース読み込みエラー:", error);
-    throw error;
-  }
-}
-
 // RAGエージェントを作成（環境変数からモデルを取得）
 export const ragAgentPg = new Agent({
   name: "RAGエージェント（pgvector）",
@@ -74,7 +47,6 @@ export const ragAgentPg = new Agent({
 // テスト用：単一質問関数
 export async function askQuestion(question: string) {
   try {
-    await ensureKnowledgeBaseLoaded();
     const response = await ragAgentPg.generate(question);
     return response.text;
   } catch (error) {
