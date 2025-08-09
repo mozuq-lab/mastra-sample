@@ -20,11 +20,13 @@
 ## 🔧 セットアップ
 
 ### 1. 依存関係のインストール
+
 ```bash
 npm install
 ```
 
 ### 2. 環境変数の設定
+
 `.env`ファイルを作成し、以下の変数を設定：
 
 ```bash
@@ -40,6 +42,27 @@ EMBEDDING_MODEL=text-embedding-3-small
 ```
 
 ### 3. PostgreSQLセットアップ
+
+#### Option A: Docker（推奨）
+
+Docker Composeを使った簡単なセットアップ：
+
+```bash
+# PostgreSQL with pgvector extensionをDockerで起動
+docker-compose up -d postgres
+
+# または直接Dockerコマンドで実行
+docker run -d \
+  --name postgres-pgvector \
+  -e POSTGRES_DB=mastra_vectors \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  pgvector/pgvector:pg16
+```
+
+#### Option B: ローカルインストール
+
 ```bash
 # PostgreSQLサーバー起動
 # macOSの場合:
@@ -50,6 +73,7 @@ psql -c "CREATE EXTENSION IF NOT EXISTS vector;" -d mastra_vectors
 ```
 
 ### 4. ベクターストアの初期化
+
 ```bash
 # データファイルからベクターストアを構築
 npm run pgvector:update
@@ -61,6 +85,7 @@ npm run pgvector:stats
 ## 🎯 使用方法
 
 ### 開発サーバーの起動
+
 ```bash
 npm run dev
 ```
@@ -68,16 +93,19 @@ npm run dev
 ### エージェントのテスト実行
 
 #### RAGエージェント（PostgreSQL版）
+
 ```bash
 npm run dev -- examples/rag-libsql-example.ts
 ```
 
 #### 数学計算エージェント
+
 ```bash
 npm run dev -- examples/math-example.ts
 ```
 
 #### その他のエージェント
+
 ```bash
 # 構造化出力の例
 npm run dev -- examples/structured-output.ts
@@ -128,12 +156,15 @@ src/
 ## 🔧 環境変数リファレンス
 
 ### 必須設定
+
 - `OPENAI_API_KEY` - OpenAI APIキー
 
 ### データベース設定
+
 - `PG_CONNECTION_STRING` - PostgreSQL接続文字列（デフォルト: `postgresql://postgres:password@localhost:5432/mastra_vectors`）
 
 ### モデル設定
+
 - `LLM_MODEL` - 使用するLLMモデル（デフォルト: `gpt-4o-mini`）
   - 利用可能: `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `gpt-4`, `gpt-3.5-turbo`
 - `EMBEDDING_MODEL` - 使用するエンべディングモデル（デフォルト: `text-embedding-3-small`）
@@ -142,10 +173,12 @@ src/
 ## 🎨 カスタマイズ
 
 ### 新しいデータファイルの追加
+
 1. `src/data/`ディレクトリにファイルを配置（.txt, .md, .json, .csv対応）
 2. `npm run pgvector:update`でベクターストアを更新
 
 ### エージェントのカスタマイズ
+
 エージェントは`src/mastra/agents/`以下で定義されています。新しいエージェントを追加する場合：
 
 1. 新しいエージェントファイルを作成
@@ -153,6 +186,7 @@ src/
 3. 必要に応じてツールを`src/mastra/tools/`に実装
 
 ### モデルの変更
+
 環境変数または`src/mastra/config/models.ts`でモデルを変更できます：
 
 ```typescript
