@@ -248,6 +248,9 @@ async function updateVectorStore() {
   } catch (error) {
     console.error("❌ Error updating vector store:", error);
     process.exit(1);
+  } finally {
+    // プロセスを明示的に終了
+    process.exit(0);
   }
 }
 
@@ -284,6 +287,9 @@ async function showStats() {
   } catch (error) {
     console.error("❌ Error getting stats:", error);
     process.exit(1);
+  } finally {
+    // プロセスを明示的に終了
+    process.exit(0);
   }
 }
 
@@ -309,6 +315,9 @@ async function rebuildVectorStore() {
   } catch (error) {
     console.error("❌ Error rebuilding vector store:", error);
     process.exit(1);
+  } finally {
+    // プロセスを明示的に終了
+    process.exit(0);
   }
 }
 
